@@ -9,10 +9,10 @@ import (
 
 // Item represents a task.
 type Item struct {
-	Task        string    `json:"task"`
-	StartedAt   time.Time `json:"startedAt"`
-	CompletedAt time.Time `json:"completedAt"`
-	Completed   bool      `json:"completed"`
+	Task        string    `json:"Task"`
+	StartedAt   time.Time `json:"StartedAt"`
+	CompletedAt time.Time `json:"CompletedAt"`
+	Completed   bool      `json:"Completed"`
 }
 
 // List is one or more tasks.
