@@ -1,6 +1,9 @@
 package todo
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 // Add task
 func TestAdd(t *testing.T) {
@@ -77,9 +80,27 @@ func TestComplete(t *testing.T) {
 // Get from file and populate list
 func TestSaveGet(t *testing.T) {
 	// create two lists
+	l1 := List{}
+	l2 := List{}
+
 	// Add a task to l1
+	l1.Add("Task 1")
+
 	// create a temp file, defer its removal
+	temp, err := os.CreateTemp("", "taskfile")
+	if err != nil {
+		t.Fatalf("Error creating temp file")
+	}
+	defer temp.Close()
+	defer os.Remove(temp.Name())
 	// save l1 to the temp file
+	l1.Save(temp.Name())
 	// get l1 from the temp file, save it in l2
+	if err := l2.Get(temp.Name()); err != nil {
+		t.Errorf("Error in Get method")
+	}
 	// compare l1 and l2 tasks
+	if l1[0].Task != l2[0].Task {
+		t.Errorf("\ngot:  %s\nwant: %s", l1[0].Task, l2[0].Task)
+	}
 }

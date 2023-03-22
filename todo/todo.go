@@ -2,6 +2,7 @@ package todo
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -65,7 +66,41 @@ func (l *List) Save(filename string) error {
 }
 
 // Get from file and populate list
+func (l *List) Get(filename string) error {
+
+	// read the file as a slice of bytes
+	fileContents, err := os.ReadFile(filename)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+	if len(fileContents) == 0 {
+		return nil
+	}
+	// unmarshal into a struct
+	return json.Unmarshal(fileContents, l)
+}
 
 // Stringer (lists just the task)
+func (l *List) String() string {
+
+	formatted := ""
+
+	// loop through tasks in list
+	for k, t := range *l {
+
+		prefix := "[ ] "
+		if t.Completed {
+			prefix = "[X] "
+		}
+
+		formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+
+	}
+
+	return formatted
+}
 
 // Verbose (includes CreatedAt)
