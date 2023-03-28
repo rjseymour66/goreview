@@ -10,12 +10,11 @@ import (
 	"todo"
 )
 
-// Create custom usage info
-
 const usage = `
-Thank you for using my todo CLI app!
+todo tool. Additional info
+Copyright 2023
 Usage:
-	todo [options]
+  todo [options]
 Options:`
 
 // todofile name
@@ -25,9 +24,10 @@ var todoFile = ".todofile.json"
 // add
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "%s tool. Developed to learn the Go programming language\n", os.Args[0])
-		fmt.Fprintf(flag.CommandLine.Output(), "Copyright 2023\n")
-		fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
+		// fmt.Fprintf(flag.CommandLine.Output(), "%s tool. Developed to learn the Go programming language\n", os.Args[0])
+		// fmt.Fprintf(flag.CommandLine.Output(), "Copyright 2023\n")
+		// fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
+		fmt.Fprintln(flag.CommandLine.Output(), usage[1:])
 		flag.PrintDefaults()
 	}
 

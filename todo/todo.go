@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// Item represents a task.
-type Item struct {
+// item represents a task.
+type item struct {
 	Task        string    `json:"Task"`
 	StartedAt   time.Time `json:"StartedAt"`
 	CompletedAt time.Time `json:"CompletedAt"`
@@ -17,11 +17,11 @@ type Item struct {
 }
 
 // List is one or more tasks.
-type List []Item
+type List []item
 
 // Add task adds a task to the list.
 func (l *List) Add(task string) {
-	item := Item{
+	item := item{
 		Task:        task,
 		StartedAt:   time.Now(),
 		CompletedAt: time.Time{},
