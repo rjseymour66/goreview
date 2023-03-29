@@ -97,7 +97,7 @@ func (l *List) String() string {
 		if t.Done {
 			prefix = "[x] "
 		}
-		fmt.Fprintf(&formatted, "%s%dTask: %s, Completed: %t\n", prefix, k, t.Task, t.Done)
+		fmt.Fprintf(&formatted, "%s%d. %s\n", prefix, k+1, t.Task)
 	}
 	return formatted.String()
 }
