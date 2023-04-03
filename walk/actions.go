@@ -24,7 +24,7 @@ func filterOut(path string, ext string, minSize int64, info os.FileInfo) bool {
 
 // listFile prints the file to out.
 func listFile(path string, out io.Writer) error {
-	_, err := fmt.Fprintf(out, path)
+	_, err := fmt.Fprintln(out, path)
 	return err
 }
 
@@ -37,19 +37,33 @@ func delFile(path string, delLogger *log.Logger) error {
 	return nil
 }
 
+// archiveFile preserves the relative direcory tree so files are correctly archived relative
+// to the root, and compresses data.
+// - destDir: The destination directory for the archived files. The target.
+// - root: Directory where the search was started. root is used to determine the relative path of the files
+// that you are archiving.
+// - path: Path of the file that is being archived.
 func archiveFile(destDir, root, path string) error {
-	// Creates a zip file out of a file in a destination directory:
 	// confirm that the provided destination is a directory
-	// get the relative path between the pwd and destination dir
-	// create a .gz file name for the zip file
-	// construct the targetPath directory structure from the destination path, relative path, and destination file name
-	// Make directories for the targetPath directory structure
-	// Zip the file
-	//// Open the targetPath file
-	//// Open the file w the contents to zip
-	//// Create a zip writer
-	//// Copy the contents from the zip writer to the file
-	//// Close the zip writer
-	//// return an error on fail
+	info, err := os.Stat(destDir)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("%s is not a directory", info)
+	}
+
+	// get the relative directory from root of the file to be archived
+	relDir, err := filepath.Rel(root, filepath.Dir(path))
+	if err != nil {
+		return err
+	}
+
+	// create new name for .gz file
+	dest := fmt.Sprintf("%s.gz", filepath.Base(path))
+
+	// Create the path for the final zipped file
+	targetPath := filepath.Join(destDir, relDir, dest)
+
 	return nil
 }

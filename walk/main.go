@@ -4,8 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 type config struct {
@@ -79,19 +81,33 @@ func main() {
 	}
 }
 
-func run(root string, w io.Writer, cfg config) error {
+func run(root string, out io.Writer, cfg config) error {
 	// create a logger and assign to cfg
 	delLogger := log.New(cfg.wLog, "DELETED:", log.LstdFlags)
 
-	// return filepath.Walk(root, func(path, os.FileInfo, error))
-	//// check if func() returns an error while accessing a path. This prevents panics
-	//// filter files
-	//// list files
-	//// archive files
-	//// delete files
-	//// list files again as default option
-
-	return nil
+	// Walk only returns functions that return error.
+	return filepath.Walk(root,
+		func(path string, info fs.FileInfo, err error) error {
+			// check if func() returns an error while accessing a path. This prevents panics
+			if err != nil {
+				return err
+			}
+			// filter files
+			if filterOut(path, cfg.ext, cfg.size, info) {
+				return nil
+			}
+			// list files
+			if cfg.list {
+				return listFile(path, out)
+			}
+			// archive files
+			// delete files
+			if cfg.del {
+				return delFile(path, delLogger)
+			}
+			// list files again as default option
+			return listFile(path, out)
+		})
 }
 
 /*
