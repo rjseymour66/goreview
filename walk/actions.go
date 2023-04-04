@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"fmt"
 	"io"
 	"log"
@@ -65,5 +66,43 @@ func archiveFile(destDir, root, path string) error {
 	// Create the path for the final zipped file
 	targetPath := filepath.Join(destDir, relDir, dest)
 
-	return nil
+	// create the target directory tree
+	if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+		return err
+	}
+	/*
+		GZIP Implementation
+	*/
+
+	// Open the targetPath so you can write to it
+	out, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// open the source file to read from it
+	in, err := os.Open(path)
+	if err != nil {
+		return nil
+	}
+
+	defer in.Close()
+
+	// create a new gzip writer and name
+	zw := gzip.NewWriter(out)
+	zw.Name = filepath.Base(path)
+
+	// write compressed data with io.Copy
+	if _, err := io.Copy(zw, in); err != nil {
+		return err
+	}
+
+	// close the gzip writer
+	if err := zw.Close(); err != nil {
+		return err
+	}
+
+	// close the destination (zipped file)
+	return out.Close()
 }
